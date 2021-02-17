@@ -132,6 +132,8 @@ String EthernetMacAddress(void);
 
 #define USE_UFILESYS
 
+#undef FIRMWARE_MINIMAL                            // Minimal is not supported as not needed
+
 // Hardware has no ESP32
 #undef USE_TUYA_DIMMER
 #undef USE_PWM_DIMMER
@@ -259,6 +261,8 @@ const uint16_t LOG_BUFFER_SIZE = 4000;         // Max number of characters in lo
 #define TASM_FILE_DRIVER            "/.drvset%03d"
 #define TASM_FILE_SENSOR            "/.snsset%03d"
 #define TASM_FILE_ZIGBEE            "/zb"              // Zigbee settings blob as used by CC2530 on ESP32
+#define TASM_FILE_AUTOEXEC          "/autoexec.bat"    // Commands executed after restart
+#define TASM_FILE_CONFIG            "/config.sys"      // Settings executed after restart
 
 #ifndef MQTT_MAX_PACKET_SIZE
 #define MQTT_MAX_PACKET_SIZE        1200       // Bytes
@@ -471,7 +475,6 @@ const char kWebColors[] PROGMEM =
 
 #ifdef USE_DEVICE_GROUPS
 #define SendDeviceGroupMessage(DEVICE_INDEX, REQUEST_TYPE, ...) _SendDeviceGroupMessage(DEVICE_INDEX, REQUEST_TYPE, __VA_ARGS__, 0)
-#define SendLocalDeviceGroupMessage(REQUEST_TYPE, ...) _SendDeviceGroupMessage(0, REQUEST_TYPE, __VA_ARGS__, 0)
 uint8_t device_group_count = 0;
 bool first_device_group_is_local = true;
 #endif  // USE_DEVICE_GROUPS
