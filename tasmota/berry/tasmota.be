@@ -1,8 +1,15 @@
 import json import string
 tasmota = module("tasmota")
 def log(m) print(m) end
+def save() end
 
 #######
+import string
+import json
+import gc
+import tasmota
+#// import alias
+import tasmota as t
 
 def charsinstring(s,c)
   for i:0..size(s)-1
@@ -12,6 +19,26 @@ def charsinstring(s,c)
   end
   return -1
 end
+
+###
+class Tasmota
+  var _op, _operators, _rules
+  def init()
+    self._operators = "=<>!|"
+    self._op = [
+      ['==', /s1,s2-> str(s1)  == str(s2)],
+      ['!==',/s1,s2-> str(s1)  != str(s2)],
+      ['=',  /f1,f2-> real(f1) == real(f2)],
+      ['!=', /f1,f2-> real(f1) != real(f2)],
+      ['>=', /f1,f2-> real(f1) >= real(f2)],
+      ['<=', /f1,f2-> real(f1) <= real(f2)],
+      ['>',  /f1,f2-> real(f1) >  real(f2)],
+      ['<',  /f1,f2-> real(f1) <  real(f2)],
+    ]
+    self._rules = {}
+  end
+end
+###
 
 tasmota._eqstr=/s1,s2-> str(s1) == str(s2)
 tasmota._neqstr=/s1,s2-> str(s1) != str(s2)
@@ -108,6 +135,15 @@ tasmota.delay = def(ms)
   tend = tasmota.millis(ms)
   while !tasmota.timereached(tend)
     tasmota.yield()
+  end
+end
+
+def load(f)
+  try
+    if f[0] != '/' f = '/' + f end
+    compile(f,'file')()
+  except .. as e
+    log(string.format("BRY: could not load file '%s' - %s",f,e))
   end
 end
 
